@@ -68,7 +68,7 @@ Text for Copy-Paste:
 
 
 ### Sysmon Config Update Playbook
-![09.png](img/09.img)
+![09.png](img/09.png)
 Text for Copy-Paste:
 * Name: Sysmon Configuration Update
 * Description: Updates the Sysmon configuration on the selected asset(s).
