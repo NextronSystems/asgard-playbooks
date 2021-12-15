@@ -7,6 +7,8 @@ and outputs as text directly on the commandline and offers flags to output json 
 
 ### Run a Group Task Example:
 
+The evaluation script expects the results of the playbooks defined here. Also the script expects the results in a ZIP archive. So if you only plan to scan one system, scan it with a Group Task.
+
 ![09.png](img/09.png)
 
 ### Evaluation Script Examples
