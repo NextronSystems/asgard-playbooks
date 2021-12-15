@@ -43,7 +43,7 @@ Add verbose outputs (Does not filter out non-vulnerable versions, but therefore 
 python evalPB.py --verbose --csv log4j-inventory.csv results-1234.zip
 ```
 
-You can also add multiple playbook results (e.g. from Windows and Linux hosts)
+You can also add multiple playbook results (e.g. from Windows and Linux hosts):
 ```none
 python evalPB.py --verbose --csv log4j-inventory.csv results-win.zip results-lin.zip
 ```
@@ -59,6 +59,7 @@ You can either do that beforehand using scp, rsync, WinSCP or whatever tool you 
 (e.g. `chown asgard2: /var/lib/nextron/asgard2/playbook-files/check4logFOURj*`).
 
 Or you can use the file upload feature during playbook creation:
+
 ![01.png](img/01.png)
 
 ### How to Create a Playbook
@@ -69,25 +70,38 @@ Go to **Response Control > Playbooks > Add Playbook**, enter
 * Description: Runs checks on selected Linux asset(s) in order to find possible log4j instances
 
 and click **Add Playbook**.
+
 ![02.png](img/02.png)
 
 Next add the single playbook steps. Therefore click anywhere on the newly created playbook to open its drop-down menu and then choose **Add Step** for each of the following Steps:
+
 ![03.png](img/03.png)
+
 1. Upload check script
+
 ![04.png](img/04.png)
-	- Choose the already uploaded script or select **Upload New File** if you want to upload it from the browser.
+
+- Choose the already uploaded script or select **Upload New File** if you want to upload it from the browser.
+
 2. Execute check script
+
 ![05.png](img/05.png)
-	- Commands 1: `chmod u+x check4logFOURj.sh`
-	- Commands 2: `bash check4logFOURj.sh`
+
+- Commands 1: `chmod u+x check4logFOURj.sh`
+- Commands 2: `bash check4logFOURj.sh`
+    
 3. Download results 
+
 ![06.png](img/06.png)
-    - Path to File / Directory: results
-    - Check the 'Is Directory' box
-    - Check the 'Recursively' box
+
+- Path to File / Directory: results
+- Check the 'Is Directory' box
+- Check the 'Recursively' box
 
 ### check4logFOURj Linux Playbook
+
 ![07.png](img/07.png)
+
 Text for Copy-Paste:
 * Name: check4logFOURj Linux
 * Description: Runs checks on selected Linux asset(s) in order to find possible log4j instances
@@ -108,7 +122,9 @@ Text for Copy-Paste:
     * Recursively: checked
 
 ### check4logFOURj Windows Playbook
+
 ![08.png](img/08.png)
+
 Text for Copy-Paste:
 * Name: check4logFOURj Windows
 * Description: Runs checks on selected Windows asset(s) in order to find possible log4j instances
