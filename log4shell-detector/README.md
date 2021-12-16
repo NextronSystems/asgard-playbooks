@@ -1,6 +1,7 @@
 # Playbooks and Scripts for ASGARD to execute log4shell-detector
 This playbook enables the usage of the [log4shell-detector](https://github.com/Neo23x0/log4shell-detector) script with ASGARD Management Center.
 
+The script checks local log files for indicators of exploitation attempts, even heavily obfuscated ones that string or regular expression based patterns wouldn't detect.
 
 ## Playbook Creation
 For the playbooks to work some files need to be put into the `/var/lib/nextron/asgard2/playbook-files` directory of ASGARD:
