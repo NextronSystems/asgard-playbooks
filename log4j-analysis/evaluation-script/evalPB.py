@@ -20,129 +20,133 @@ results = {}
 def main():
     parser = argparse.ArgumentParser(description='Evaluate Playbook Results')
     parser.add_argument('inputfile', help='Input Zip file(s) downloaded from ASGARD Playbook', nargs='+')
-    parser.add_argument('-v', '--verbose', dest='verbose', help='Also print low level events (not containing a vulnerable log4j2 version string)', action="store_true")
+    parser.add_argument('-v', '--vulnerable', dest='vulnerable', help='Only print vulnarable instances', action="store_true")
     parser.add_argument('--json', dest='jsonpath', help='Dump results into json with the given path')
     parser.add_argument('--csv', dest='csvpath', help='Dump results into csv with the given path')
-    args = parser.parse_args()
+    try:
+        args = parser.parse_args()
+    except argparse.ArgumentError as exc:
+        print (exc.message, '\n', exc.argument)
+        return 1
 
     #Match for these: log4j-api-2.12.1.jar - all versions from 2.0.0 to 2.15.9
     log4jre = re.compile(".+log4j-.{0,10}(2\.([0-9]\.|1[0-5])\.[0-9]+).*")
 
     # Setup Temporary directory
-    workdir = tempfile.mkdtemp(dir='.')
-    for infile in args.inputfile:
-        with zipfile.ZipFile(infile, 'r') as zip_ref:
-            zip_ref.extractall(workdir)
+    try: 
+        workdir = tempfile.mkdtemp(dir='.')
+    except Exception as err:
+        print("Something went wrong while creating tmp workdir: "+err)
+
+    try:
+        for infile in args.inputfile:
+                with zipfile.ZipFile(infile, 'r') as zip_ref:
+                    zip_ref.extractall(workdir)
+    except Exception as err:
+        print("Error with open zip file:"+  str(err)) 
+        return 1
 
     # Walk over the dict in search for the downloaded result files
-    for root, dirs, files in os.walk(workdir):
-        for file in files:
-            # Only unpack the Files from "step-3" which are the downloaded result files
-            if '-step-3-' in file:
-                with tarfile.open(os.path.join(root,file), 'r:gz') as tfile:
-                    tfile.extractall(path=workdir+"")
-                # Remove Tar.GZ file
-                os.remove(os.path.join(root,file))
+    try:
+        for root, dirs, files in os.walk(workdir):
+            for file in files:
+                # Only unpack the Files from "step-3" which are the downloaded result files
+                if '-step-3-' in file:
+                    with tarfile.open(os.path.join(root,file), 'r:gz') as tfile:
+                        tfile.extractall(path=workdir+"")
+                    # Remove Tar.GZ file
+                    os.remove(os.path.join(root,file))
+    except Exception as err:
+        print("Something went wrong while extracting the tarfiles: "+ str(err))
 
+    validfileendings = ["processes","fsfiles", "openfiles", "jndiclass"]
     # Walk over every file thats now in the directory
     for root, dirs, files in os.walk(workdir):
         for file in files:
-            # If the file ends with one of the set endings, evaluate it
-            # Check all processes files
-            if ".processes" in file:
-                host, datet = parsefilename(file)
-                with open(os.path.join(root,file)) as fileReader:
-                      for line in fileReader:
-                        line = line.strip()
-                        if line == "":
-                            continue    
-                        matches = log4jre.match(line)
-                        if matches:
-                            add2dict(host, {"type":"processes", "level":"high", "date":datet, "event":"log4j Version: "+matches[1]+" - "+line})
-                        else:
-                            add2dict(host, {"type":"processes", "level":"low", "date":datet, "event":line})
-                        continue
+            # Check for the filetype, only analyze known filetypes            
+            ending = file.split(".")
+            if not ending[-1] in validfileendings:
+                continue
+            type = ending[-1]
 
-
-            # Check all fsfiles files
-            elif ".fsfiles" in file:
-                host, datet = parsefilename(file)
-                with open(os.path.join(root,file)) as fileReader:
-                    
-                    for line in fileReader:
-                        line = line.strip()
-                        if line == "":
-                            continue    
-                        matches = log4jre.match(line)
-                        if matches:
-                            add2dict(host, {"type":"fsfiles", "level":"high", "date":datet, "event":"log4j Version: "+matches[1]+" - "+line})
-                        else:
-                            add2dict(host, {"type":"fsfiles", "level":"low", "date":datet, "event":line})
-                        continue
-
-
-            # Check all openfiles files
-            elif ".openfiles" in file:
-                host, datet = parsefilename(file)
-                with open(os.path.join(root,file)) as fileReader:
-                    for line in fileReader:
-                        line = line.strip()
-                        if line == "":
-                            continue
-                        matches = log4jre.match(line)
-                        if matches:
-                            add2dict(host, {"type":"openfiles", "level":"high", "date":datet, "event":"log4j Version: "+matches[1]+" - "+line})
-                        else:
-                            add2dict(host, {"type":"openfiles", "level":"low", "date":datet, "event":line})
+            host, datet = parsefilename(file)
             
-            # Check all jndiclass files
-            elif ".jndiclass" in file:
-                host, datet = parsefilename(file)
+            # Open file and do the checks
+            try:
                 with open(os.path.join(root,file)) as fileReader:
-                    for line in fileReader:
-                        line = line.strip()
-                        if line == "":
-                            continue
-                        # Match for the version number
-                        matches = log4jre.match(line)
+
+                        for line in fileReader:
+                            line = line.strip()
+                            # Skip empty lines
+                            if line == "":
+                                continue
+
+                            event = {}
                         
-                        if matches:
-                            add2dict(host, {"type":"jndiclass", "level":"high", "date":datet, "event":"log4j Version: "+matches[1]+" - "+line})
-                        else:
-                            add2dict(host, {"type":"jndiclass", "level":"low", "date":datet, "event":line})
-    # Dump as json
-    if args.jsonpath:
-        path =  args.jsonpath
-        with open(path, 'w') as fp:
-            json.dump(results, fp,indent=2, sort_keys=True)
-    
-    # Dump as csv
-    if args.csvpath:
-        path =  args.csvpath
-        with open(path, 'w') as csvfile:
-            w = csv.DictWriter(csvfile, ["Host", "Level", "Type", "Event"])
-            w.writeheader()
-            for host in results:
-                for event in results[host]["events"]:
-                    w.writerow({"Host":host,"Level":event["level"], "Type":event["type"],"Event": event["event"]})
+                            event["host"] = host
+                            event["date"] = datet
+                            event["type"] = type
+                            
+                            # By default, the event just logs the line
+                            event["event"] = line
+                            
+                            # Default event level is low
+                            event["level"]  = "low"
+                            
+                            # Events of type jndiclass are always high
+                            if event["type"] == "jndiclass":
+                                event["level"] = "high"
+
+                            # Do the Regex Version check
+                            matches = log4jre.match(line)
+                            if matches:
+                                # If the detected log4j version is vulnarable, set event level to high
+                                event["level"] = "high"
+                                # Prefix the logline with the detected log4j version
+                                event["event"] = "log4j Version: "+matches[1]+" - "+ event["event"]
+
+                            add2dict(host, event)
+          
+            except Exception as err:
+                print("Something went wrong with reading the result files: " +str(err))
+    try:
+        # Dump as json
+        if args.jsonpath:
+            path =  args.jsonpath
+            with open(path, 'w') as fp:
+                json.dump(results, fp,indent=2, sort_keys=True)
+        
+        # Dump as csv
+        if args.csvpath:
+            path =  args.csvpath
+            with open(path, 'w') as csvfile:
+                w = csv.DictWriter(csvfile, ["Host", "Level", "Type", "Event"])
+                w.writeheader()
+                for host in results:
+                    for event in results[host]["events"]:
+                        w.writerow({"Host":event["host"],"Level":event["level"], "Type":event["type"],"Event": event["event"]})
+    except Exception as err:
+        print("Something went wrong while dumping files: " + str(err))
 
     # Print Out Results in STDOUT
     for host in results:
         for event in results[host]["events"]:
-            # Only Print Low level Events when verbose 
-            if args.verbose == True:
-                printevent(host, event)
-            # Always print High level Events
+            # Print all events when vulnerable is false
+            if args.vulnerable == False:
+                printevent( event)
+            # Otherwise just print only high events
             elif event["level"] == "high":
-                printevent(host, event)
+                printevent( event)
     
-    # Remove TMP Directory
-    shutil.rmtree(workdir)
-
+    try:
+        # Remove TMP Directory
+        shutil.rmtree(workdir)
+    except Exception as err:
+        print("Something went wrong while cleaning up: "+str(err))
     return
 
-def printevent(host, event):
-    print("HOST: "+host + "; LEVEL: " + event["level"] + "; TYPE: "+event["type"]+"; EVENT: "+ event["event"])
+def printevent( event):
+    print("HOST: "+event["host"] + "; LEVEL: " + event["level"] + "; TYPE: "+event["type"]+"; EVENT: "+ event["event"])
 
 def add2dict(host, event):
     # Add event to the dictionary
