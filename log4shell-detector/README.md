@@ -59,4 +59,13 @@ Text transcription of the screenshot:
 * Step 2:
 	* Name: Execute log4shell-detector
     * Type: Run Command Line on Endsystem
-    * Command: `cd log4shell-detector-main; python log4shell-detector.py --silent -p $path$`
+    * Command: `cd log4shell-detector-main; python log4shell-detector.py --silent $scandirs$`
+
+## Run a Task Example:
+You need to specify the location(s) which should be scanned.
+
+We suggest to use `--auto` to let the script look for log files, that are currently written to.
+
+If you want to enter specific direcories you can enter them using the `-p` flag (e.g. `-p /var/log /opt/myapp/logs`).
+
+![07.png](img/07.png)
