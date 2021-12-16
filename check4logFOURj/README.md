@@ -51,16 +51,17 @@ python evalPB.py --verbose --csv log4j-inventory.csv results-win.zip results-lin
 ![10.png](img/10.png)
 
 ## Playbook Creation
-Before you create the custom playbooks, you need to put some files into the `/var/lib/nextron/asgard2/playbook-files` directory:
+For the playbooks to work some files need to be put into the `/var/lib/nextron/asgard2/playbook-files` directory of ASGARD:
 
 1. The playbook scripts from this repo's [playbook-files](playbook-files)
 
-You can either do that beforehand using scp, rsync, WinSCP or whatever tool you use for Linux file transfer. Do not forget to change the file ownership to **asgard2:asgard2**
-(e.g. `chown asgard2: /var/lib/nextron/asgard2/playbook-files/check4logFOURj*`).
-
-Or you can use the file upload feature during playbook creation:
+You can use the file upload feature during playbook creation to achieve that:
 
 ![01.png](img/01.png)
+
+If you need to edit or update the files, you can do that using scp, rsync, WinSCP or whatever tool you use for Linux file transfer. Do not forget to change the file ownership to **asgard2:asgard2**
+(e.g. `chown asgard2: /var/lib/nextron/asgard2/playbook-files/check4logFOURj*`), if it was changed by uploading.
+
 
 ### How to Create a Playbook
 *This section explains how to create a playbook in detail. If you are familiar with ASGARD's playbook creation, see the overview of the next 2 sections.*
