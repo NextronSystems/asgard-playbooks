@@ -50,11 +50,11 @@ Next add the single playbook steps. Therefore click anywhere on the newly create
 - Check the 'Is Directory' box
 - Check the 'Recursively' box
 
-### check4logFOURj Linux Playbook
+### Overview - check4logFOURj Linux Playbook
 
 ![07.png](img/07.png)
 
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: check4logFOURj Linux
 * Description: Runs checks on selected Linux asset(s) in order to find possible log4j instances
 * Step 1:
@@ -73,11 +73,11 @@ Text for Copy-Paste:
     * Is Directory: checked
     * Recursively: checked
 
-### check4logFOURj Windows Playbook
+### Overview - check4logFOURj Windows Playbook
 
 ![08.png](img/08.png)
 
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: check4logFOURj Windows
 * Description: Runs checks on selected Windows asset(s) in order to find possible log4j instances
 * Step 1:

@@ -45,11 +45,11 @@ Next add the single playbook steps. Therefore click anywhere on the newly create
 - Commands: `cd log4shell-detector-main; python log4shell-detector.py --silent -p $path$`
     
 
-### Log4shell Detector Playbook
+### Overview - Log4shell Detector Playbook
 
 ![06.png](img/06.png)
 
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: Run log4shell-detector
 * Description: Runs the log4shell-detector python script on selected asset(s).
 * Step 1:

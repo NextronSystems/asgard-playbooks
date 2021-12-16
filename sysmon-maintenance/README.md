@@ -53,9 +53,9 @@ Next add the single playbook steps. Therefore click anywhere on the newly create
 
 
 
-### Sysmon Install Playbook
+### Overview - Sysmon Install Playbook
 ![08.png](img/08.png)
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: Sysmon Install
 * Description: Installs Sysmon with the current configuration to the selected asset(s).
 * Step 1:
@@ -69,9 +69,9 @@ Text for Copy-Paste:
 	* Commands: `powershell -exec bypass .\sysmon-install.ps1`
 
 
-### Sysmon Config Update Playbook
+### Overview - Sysmon Config Update Playbook
 ![09.png](img/09.png)
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: Sysmon Configuration Update
 * Description: Updates the Sysmon configuration on the selected asset(s).
 * Step 1:
@@ -83,9 +83,9 @@ Text for Copy-Paste:
 	* Commands: `powershell -exec bypass .\sysmon-configupdate.ps1`
 
 
-### Sysmon Uninstall Playbook
+### Overview - Sysmon Uninstall Playbook
 ![10.png](img/10.png)
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: Sysmon Uninstall
 * Description: Uninstalls Sysmon from the selected asset(s).
 * Step 1:
@@ -97,7 +97,7 @@ Text for Copy-Paste:
 ### Using multiple Sysmon configurations
 If you use more than one sysmon config, you can upload your configurations to ASGARD under different names and using an additional Sysmon Config Update Playbook. You can give an additional parameter to the Sysmon update or install  script to use a different configuration. An example for updating the Sysmon config for domain controllers is given below:
 ![11.png](img/11.png)
-Text for Copy-Paste:
+Text transcription of the screenshot:
 * Name: Sysmon Config Update for DCs
 * Description: Updates the Sysmon configuration on the selected asset(s) to use the sysmonconfig-dcs.xml configuration file.
 * Step 1:
