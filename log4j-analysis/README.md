@@ -1,4 +1,4 @@
-# Playbooks and Scripts for ASGARD to find (vulnerable) Log4j instances
+# Playbooks for ASGARD to find Log4j Usage
 We wrote scripts for Windows and Linux hosts to be used in ASGARD Management Center that scan the host for traces of log4j usage and a script to evaluate the results.
 
 ## The Evaluation Script
