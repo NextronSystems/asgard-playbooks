@@ -1,17 +1,19 @@
 # Sysmon Maintenance Playbooks and Scripts for ASGARD
 
 ## Playbook Creation
-Before you create the custom playbooks, you need to put some files into the `/var/lib/nextron/asgard2/playbook-files` directory:
+For the playbooks to work, some files need to be put into the `/var/lib/nextron/asgard2/playbook-files` directory of ASGARD:
 
 1. A current version of [Sysmon.zip](https://download.sysinternals.com/files/Sysmon.zip)
 2. Your Sysmon config called `sysmonconfig.xml`
 3. The playbook Powershell scripts from this repo's [playbook-files](playbook-files)
 
-You can either do that beforehand using scp, rsync, WinSCP or whatever tool you use for Linux file transfer. Do not forget to change the file ownership to **asgard2:asgard2**
-(e.g. `chown asgard2: /var/lib/nextron/asgard2/playbook-files/[Ss]ysmon*`).
+You can use the file upload feature during playbook creation to achieve that:
 
-Or you can use the file upload feature during playbook creation:
 ![01.png](img/01.png)
+
+If you need to edit or update the files, you can do that using scp, rsync, WinSCP or whatever tool you use for Linux file transfer.
+Do not forget to change the file ownership to  **asgard2:asgard2**
+(e.g. `chown asgard2: /var/lib/nextron/asgard2/playbook-files/[Ss]ysmon*`), if it was changed by uploading.
 
 ### Choosing a Sysmon configuration
 If you do not have a Sysmon configuration yet, there are several options we suggest:
