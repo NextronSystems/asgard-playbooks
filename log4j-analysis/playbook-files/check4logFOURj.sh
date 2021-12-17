@@ -24,6 +24,6 @@ else
     echo "[ERROR] lsof not found on $(hostname)" > "${out}.lnx.openfiles"
 fi
 
-grep -r --include *.[wj]ar "JndiLookup.class" / 2>&1 | grep matches > "${out}.lnx.jndiclass"
+grep -r --include *.[ewj]ar "JndiLookup.class" / 2>&1 | grep matches > "${out}.lnx.jndiclass"
 
 echo "$(date -Is) Finished running checks. Results can be found at ${outdir}"
