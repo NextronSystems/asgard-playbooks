@@ -130,15 +130,9 @@ Save output as CSV:
 python evalPB.py --csv log4j-inventory.csv results-1234.zip
 ```
 
-Add verbose outputs (Does not filter out non-vulnerable versions, but therefore contains findings without any version string present):
-
-```none
-python evalPB.py --verbose --csv log4j-inventory.csv results-1234.zip
-```
-
 You can also add multiple playbook results (e.g. from Windows and Linux hosts):
 ```none
-python evalPB.py --verbose --csv log4j-inventory.csv results-win.zip results-lin.zip
+python evalPB.py --csv log4j-inventory.csv results-win.zip results-lin.zip
 ```
 
 The result can then be evaluated with an auto filter table:
