@@ -29,8 +29,8 @@ def main():
         print (exc.message, '\n', exc.argument)
         return 1
 
-    #Match for these: log4j-api-2.12.1.jar - all versions from 2.0.0 to 2.14.9
-    log4jre = re.compile(".+log4j-.{0,10}(2\.([0-9]\.|1[0-4])\.[0-9]+).*")
+    #Match for these: log4j-api-2.12.1.jar - all versions from 2.0.0 to 2.15.*
+    log4jre = re.compile(".+log4j-.{0,10}(2\.([0-9]\.|1[0-5])\.[0-9]+).*")
 
     # Setup Temporary directory
     try: 
