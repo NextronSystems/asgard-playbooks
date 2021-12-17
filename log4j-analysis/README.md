@@ -110,19 +110,18 @@ The evaluation script expects the results of the playbooks defined here. Also th
 The help text:
 
 ```none
-python evalPB.py --help
 usage: evalPB.py [-h] [-v] [--json JSONPATH] [--csv CSVPATH] inputfile [inputfile ...]
 
 Evaluate Playbook Results
 
 positional arguments:
-  inputfile        Input Zip file(s) downloaded from ASGARD Playbook
+  inputfile         Input Zip file(s) downloaded from ASGARD Playbook
 
   options:
-    -h, --help       show this help message and exit
-    -v, --verbose    Also print low level events (not containing a vulnerable log4j2 version string)
-    --json JSONPATH  Dump results into json with the given path
-    --csv CSVPATH    Dump results into csv with the given path
+    -h, --help        show this help message and exit
+    -v, --vulnerable  Only print findings of vulnarable versions
+    --json JSONPATH   Dump results into json with the given path
+    --csv CSVPATH     Dump results into csv with the given path
 ```
 
 Save output as CSV:
