@@ -15,5 +15,5 @@ Get-WmiObject Win32_Process | Select-Object CommandLine | Select-String "log4j" 
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
-    gci $drive -rec -force -include *.jar | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file "$out.win.jndiclass"
+    gci $drive -rec -force -Include "*.jar","*.war","*.ear","*.zip" | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file "$out.win.jndiclass"
 }
