@@ -8,12 +8,12 @@ handle | Select-String "log4j" | out-file  -Encoding ASCII "$out.win.openfiles"
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
-    dir -Recurse $drive |Select-Object FullName | Select-String -Pattern "log4j" | out-file -Encoding ASCII "$out.win.fsfiles"
+    dir -Recurse $drive |Select-Object FullName | Select-String -Pattern "log4j" | out-file -Append -Encoding ASCII "$out.win.fsfiles"
 }
 
 Get-WmiObject Win32_Process | Select-Object CommandLine | Select-String "log4j" | out-file -Encoding ASCII "$out.win.processes"
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
-    gci $drive -rec -force -Include "*.jar","*.war","*.ear","*.zip" | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file -Encoding ASCII "$out.win.jndiclass"
+    gci $drive -rec -force -Include "*.jar","*.war","*.ear","*.zip" | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file -Append -Encoding ASCII "$out.win.jndiclass"
 }
