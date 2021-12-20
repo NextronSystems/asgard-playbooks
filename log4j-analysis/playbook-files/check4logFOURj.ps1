@@ -4,16 +4,16 @@ $outdir = "results"
 $out = -join($outdir, "\",$env:COMPUTERNAME,"_check4logFOURj_",$date)
 mkdir $outdir 
 
-handle | Select-String "log4j" | out-file "$out.win.openfiles"
+handle | Select-String "log4j" | out-file  -Encoding ASCII "$out.win.openfiles"
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
-    dir -Recurse $drive |Select-Object FullName | Select-String -Pattern "log4j" | out-file "$out.win.fsfiles"
+    dir -Recurse $drive |Select-Object FullName | Select-String -Pattern "log4j" | out-file -Encoding ASCII "$out.win.fsfiles"
 }
 
-Get-WmiObject Win32_Process | Select-Object CommandLine | Select-String "log4j" | out-file "$out.win.processes"
+Get-WmiObject Win32_Process | Select-Object CommandLine | Select-String "log4j" | out-file -Encoding ASCII "$out.win.processes"
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
-    gci $drive -rec -force -Include "*.jar","*.war","*.ear","*.zip" | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file "$out.win.jndiclass"
+    gci $drive -rec -force -Include "*.jar","*.war","*.ear","*.zip" | foreach {select-string "JndiLookup.class" $_} | select -exp Path | out-file -Encoding ASCII "$out.win.jndiclass"
 }
