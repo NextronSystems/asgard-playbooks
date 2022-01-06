@@ -1,10 +1,11 @@
 $date = Get-Date -Format "yyyy-MM-dd_HHmm"
 $ErrorActionPreference= 'silentlycontinue'
+$PSDefaultParameterValues['out-file:width'] = 2147483647
 $outdir = "results"
 $out = -join($outdir, "\",$env:COMPUTERNAME,"_check4logFOURj_",$date)
 mkdir $outdir 
 
-handle | Select-String "log4j" | out-file  -Encoding ASCII "$out.win.openfiles"
+handle | Select-String "log4j" | out-file -Encoding ASCII "$out.win.openfiles"
 
 foreach ($drive in gdr -PSProvider 'FileSystem' |  select -exp Root)
 {
