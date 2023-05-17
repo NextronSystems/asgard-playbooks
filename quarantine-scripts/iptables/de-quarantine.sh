@@ -6,7 +6,6 @@
 # v1.0
 
 # Environment variables required by this script
-# ASGARD_IP - IP address of ASGARD system
 # ASGARD_CACHE_DIR - directory used for backups
 
 # Variable errors
