@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # ASGARD De-Quarantine Script
-# 
-# Markus Meyer, Mai 2023
-# v1.0
+#
+# Nextron Systems, May 2024
+# v1.1
 
-# Environment variables required by this script
-# ASGARD_CACHE_DIR - directory used for backups
+# variables required by this script - if executed via ASGARD, you dont need to uncomment those
+# ASGARD_CACHE_DIR="/var/lib/asgard2-agent/cache"
 
 # Variable errors
 function var_error() {
@@ -20,7 +20,7 @@ function restore_error() {
 }
 # Moving backup file failed
 function move_error() {
-  ECHO "Error moving $BACKUP to $OLDBACKUP. Reruns of the quarantine playbook won't save a new firewall configuration."
+  echo "Error moving $BACKUP to $OLDBACKUP. Reruns of the quarantine playbook won't save a new firewall configuration."
   exit 1
 }
 # No firewall tool found
@@ -28,13 +28,11 @@ function tool_error() {
   echo "No tool for managing the system firewall found"
   exit 2
 }
-# Success 
+# Success
 function success() {
-  echo "Successfully configured Quarantine rules"
-  #EVENTCREATE /SO ASGARDAGENT /ID 400 /D "ASGARD-AGENT: Successfully applied quarantine rules" /T SUCCESS /L APPLICATION
+  echo "Successfully restored iptables rules"
   exit 0
 }
-
 
 function iptables_dequarantine() {
   echo "iptables exists, assuming this is the correct tool and continue"
@@ -42,29 +40,47 @@ function iptables_dequarantine() {
   # Variables
   # Firewall rule backup file
   BACKUP=$ASGARD_CACHE_DIR/iptables.bak
-  OLDBACKUP=$ASGARD_CACHE_DIR/iptables.bak.old
+  OLDBACKUP=$ASGARD_CACHE_DIR/iptables.bak.done
 
   # Restoring old firewall rules
   echo "Checking if a backup already exists ..."
-  if [[ -f $BACKUP ]]; then 
-    echo "Restoring firewall rule set from $BACKUP ..."
-    iptables-restore $BACKUP
-    if ! [[ $? == 0 ]]; then
-      restore_error
+  if [[ -f $BACKUP ]]; then
+    # Checking if the system even had firewall rules before
+    filesize=$(stat -c%s "$BACKUP")
+
+    if [[ $filesize -eq 0 ]]; then
+      echo "Backup file empty. Restoring to defaults"
+      iptables -P INPUT ACCEPT
+      iptables -P OUTPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+
+      iptables -F
+
+      success
+    else
+      echo "Restoring firewall rule set from $BACKUP ..."
+      if ! iptables-restore "$BACKUP"; then
+        restore_error
+      fi
     fi
-  fi
 
-  # Move firewall backup file
-  echo "Move $BACKUP to $OLDBACKUP"
-  if ! mv $BACKUP $OLDBACKUP; then
-    move_error
-  fi
+    # Move firewall backup file
+    echo "Move $BACKUP to $OLDBACKUP"
+    if ! mv "$BACKUP" "$OLDBACKUP"; then
+      move_error
+    fi
+    success
+  else
+    echo "No backup file found. Restoring to defaults"
+    iptables -P INPUT ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -P FORWARD ACCEPT
 
-  success
+    iptables -F
+
+    success
+  fi
 }
-
-# placeholders
-ASGARD_CACHE_DIR="/root"
 
 if [[ -z "$ASGARD_CACHE_DIR" ]]; then
     var_error
