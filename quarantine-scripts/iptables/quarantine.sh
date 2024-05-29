@@ -9,6 +9,13 @@
 # ASGARD_IP=""
 # ASGARD_CACHE_DIR="/var/lib/asgard2-agent/cache"
 
+# Set to 1 to make the iptables rules persistent - any other value will keep them in memory only
+# this might not work on some debian based systems (see: iptables-persistent)
+persistent=0
+
+# Set to 1 to overwrite the backup file if it already exists
+overwrite=0
+
 # Variable errors
 function var_error() {
   echo "Error reading the required environment variables"
@@ -30,6 +37,16 @@ function success() {
   exit 0
 }
 
+function iptables_persistent() {
+  if [[ $persistent -eq 1 ]]; then
+    echo "Making iptables rules permanent ..."
+    if ! iptables-save > /etc/iptables/rules.v4; then
+      echo "Error saving iptables rules"
+      exit 3
+    fi
+  fi
+}
+
 function iptables_quarantine() {
   echo "iptables exists, assuming this is the correct tool and continue"
 
@@ -45,10 +62,15 @@ function iptables_quarantine() {
     if ! iptables-save > "$BACKUP"; then
       backup_error
     fi
+  elif [[ $overwrite -eq 1 ]]; then
+    echo "Overwriting existing backup file $BACKUP"
+    if ! iptables-save > "$BACKUP"; then
+      backup_error
+    fi
   else
     echo "Warning: Backup file $BACKUP already exists! No new backup will be created."
   fi
-
+    
   echo "Printing current firewall rules for documentation ..."
   echo "---"
   iptables -S
@@ -75,7 +97,13 @@ function iptables_quarantine() {
   iptables -P INPUT DROP
   iptables -P OUTPUT DROP
   iptables -P FORWARD DROP
-    
+
+  echo "Printing new firewall rules for documentation ..."
+  echo "---"
+  iptables -S
+  echo "---"
+
+  iptables_persistent
   success
 }
 
